@@ -20,6 +20,27 @@ function start() {
     })
 }
 
+// Determines whether the provider imposter is likely an imposter of the provided original account.
+function isLikelyImposter(imposter, original) {
+    if (imposter.screen_name === original.screen_name) {
+        // This is the original account, so not an imposter.
+        return false
+    }
+    // We look at the account bios. If greater than 70% of the words overlap, then we conclude it's
+    // likely an imposter.
+    const originalBioWords = original.description.split(' ')
+    const imposterBioWords = imposter.description.split(' ')
+    let matchedWordCount = 0
+    for (const word of originalBioWords) {
+        if (imposterBioWords.includes(word)) {
+            matchedWordCount++
+        }
+    }
+    if (matchedWordCount * 1.0 / originalBioWords.length > 0.7) {
+        return true
+    }
+    return false
+}
 
 function findImposters(userObj) {
     const params = {
@@ -31,7 +52,7 @@ function findImposters(userObj) {
             return;
         }
         const possibleImposters = JSON.parse(response.body)
-        const imposters = possibleImposters.filter(obj => obj.name == userObj.name && obj.screen_name !== userObj.screen_name)
+        const imposters = possibleImposters.filter(obj => isLikelyImposter(obj, userObj))
         processImposters(imposters)
     })
 }
@@ -53,7 +74,8 @@ function maybeReportImposters(names) {
 }
 
 function processImposters(imposters) {
-    console.log(`Found ${imposters.length} imposter accounts:\n`)
+    console.log(`Found ${imposters.length} imposter accounts\n`)
+    if (imposters.length == 0) return
     const imposterNames = imposters.map(it => it.screen_name)
     for (const name of imposterNames) {
         console.log(name)
