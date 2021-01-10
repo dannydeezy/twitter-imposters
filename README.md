@@ -1,7 +1,7 @@
 # Find and Report Imposters of a Twitter Account
 
 ## Usage
-1. Create a [ Twitter developer account and create an App ](https://developer.twitter.com/). Do this with the account that you want to be doing the retweeting from.
+1. Create a [ Twitter developer account and create an App ](https://developer.twitter.com/). This is required in order to access the Twitter API.
 2. Clone the repo and install
 ```
 git clone https://github.com/dannydeezy/twitter-imposters.git
