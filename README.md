@@ -17,7 +17,7 @@ module.exports = {
     access_token_secret: ''
 };
 ```
-4. Run the app with the username of the legitimate account you want to find imposters for
+4. Run the app with the username of the legitimate account you want to find imposters for. Script will prompt you if you'd like to report them.
 ```
 node find.js pierre_rochard
 ```

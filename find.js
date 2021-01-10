@@ -2,6 +2,7 @@ const Twitter = require('twitter');
 const config = require('./credentials.js');
 const client = new Twitter(config);
 const username = process.argv[2]
+const prompt = require('prompt-sync')({sigint: true});
 
 function start() {
     // First find the original account.
@@ -35,7 +36,8 @@ function findImposters(userObj) {
     })
 }
 
-function reportImposters(names) {
+function maybeReportImposters(names) {
+    prompt('\nProceed to report imposters?\n\n(press any key to continue, or CTRL-C to exit)\n')
     for (const name of names) {
         const params = {
             screen_name: name
@@ -51,12 +53,12 @@ function reportImposters(names) {
 }
 
 function processImposters(imposters) {
-    console.log(`Found ${imposters.length} imposter accounts:`)
+    console.log(`Found ${imposters.length} imposter accounts:\n`)
     const imposterNames = imposters.map(it => it.screen_name)
-    if (process.argv.length > 3 && process.argv[3] === 'report') {
-        console.log(`Reporting imposters...`)
-        reportImposters(imposterNames)
+    for (const name of imposterNames) {
+        console.log(name)
     }
+    maybeReportImposters(imposterNames)
 }
 
 start()
