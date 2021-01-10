@@ -94,7 +94,6 @@ function maybeReportImposters(names) {
         const params = {
             screen_name: name
         }
-        console.log(name)
         client.post('users/report_spam.json', params, (err, data, response) => {
             if (err) {
                 console.dir(err);
@@ -108,6 +107,9 @@ function maybeReportImposters(names) {
 function processImposters(imposters) {
     console.log(`\nFound ${imposters.length} imposter accounts\n`)
     if (imposters.length == 0) return
+    for (const name of imposters) {
+        console.dir(name)
+    }
     maybeReportImposters(imposters)
 }
 
