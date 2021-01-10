@@ -26,7 +26,7 @@ function isLikelyImposter(imposter, original) {
         // This is the original account, so not an imposter.
         return false
     }
-    // We look at the account bios. If greater than 70% of the words overlap, then we conclude it's
+    // We look at the account bios. If greater than 50% of the words overlap, then we conclude it's
     // likely an imposter.
     const originalBioWords = original.description.split(' ')
     const imposterBioWords = imposter.description.split(' ')
@@ -36,7 +36,7 @@ function isLikelyImposter(imposter, original) {
             matchedWordCount++
         }
     }
-    if (matchedWordCount * 1.0 / originalBioWords.length > 0.7) {
+    if (matchedWordCount * 1.0 / originalBioWords.length > 0.5) {
         return true
     }
     return false
