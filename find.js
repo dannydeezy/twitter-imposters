@@ -87,10 +87,7 @@ async function findImposters(userObj) {
 async function maybeReportImposters(names) {
     if (isAWS) {
         if (!report) {
-            return { 
-                message: 'Found imposters',
-                imposters: names
-            }
+            return `Found imposters: ${names.join(', ')}`
         }
     } else {
         prompt('\nProceed to report imposters?\n\n(press any key to continue, or CTRL-C to exit)\n')
@@ -112,15 +109,12 @@ async function maybeReportImposters(names) {
             })
         })
     }
-    return {
-        message: "Found and reported imposters",
-        imposters: Object.keys(reportResults)
-    }
+    return `Found and reported imposters: ${Object.keys(reportResults).join(', ')}`
 }
 
 async function processImposters(imposters) {
     console.log(`\nFound ${imposters.length} imposter accounts\n`)
-    if (imposters.length == 0) return
+    if (imposters.length == 0) return "Found 0 imposter accounts"
     for (const name of imposters) {
         console.dir(name)
     }
