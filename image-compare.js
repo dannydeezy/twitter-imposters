@@ -1,10 +1,11 @@
 const fs = require('fs')
 const { imgDiff } = require("img-diff-js");
 const child_process = require('child_process')
+const imageFolder = `/tmp/twitter-imposter-img`
 let originalImageLocation
 
-if (!fs.existsSync('images')) {
-    fs.mkdirSync('images')
+if (!fs.existsSync(imageFolder)) {
+    fs.mkdirSync(imageFolder)
 }
 
 function imageType(url) {
@@ -13,13 +14,13 @@ function imageType(url) {
 }
 
 function fetchAndSaveOriginalProfilePic(url) {
-    originalImageLocation = `images/original.${imageType(url)}`
+    originalImageLocation = `${imageFolder}/original.${imageType(url)}`
     child_process.execSync(`curl -s ${url} > ${originalImageLocation}`)
 }
 
 function hasSameProfilePic(userObj, callback) {
     const url = userObj.profile_image_url_https
-    const imageLocation = `images/${userObj.screen_name}.${imageType(url)}`
+    const imageLocation = `${imageFolder}/${userObj.screen_name}.${imageType(url)}`
     child_process.execSync(`curl -s ${url} > ${imageLocation}`)
     imgDiff({
         actualFilename: originalImageLocation,

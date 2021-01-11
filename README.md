@@ -23,7 +23,7 @@ module.exports = {
     access_token_secret: ''
 };
 ```
-4. Run the app with the username of the legitimate account you want to find imposters for. Script will prompt you if you'd like to report them. Note this will create a folder called `images` and save some profile pictures there.
+4. Run the app with the username of the legitimate account you want to find imposters for. Script will prompt you if you'd like to report them. Note this will create a folder at `/tmp/twitter-imposter-img` and save some profile pictures there.
 ```
 node find.js pierre_rochard
 ```
