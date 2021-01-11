@@ -10,8 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "img-diff-js": "^0.5.1",
     "prompt-sync": "^4.2.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
     "twitter": "^1.7.1"
   }
 }

@@ -4,7 +4,7 @@
 - NodeJS
 - curl (https://curl.haxx.se/download.html)
 
-Note this uses three external npm packages: `twitter`, `img-diff-js`, and `prompt-sync` which the author does not control. You should always audit code before running it.
+Note this uses three external npm packages: `twitter`, `request-promise`, and `prompt-sync` which the author does not control. You should always audit code before running it.
 
 ## Usage
 1. Create a [ Twitter developer account and create an App ](https://developer.twitter.com/). This is required in order to access the Twitter API.
