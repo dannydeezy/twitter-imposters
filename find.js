@@ -5,7 +5,11 @@ const prompt = require('prompt-sync')({sigint: true})
 const imageCompare = require('./image-compare')
 
 let username, report, callbackOnFinish, isAWS
-function start() {
+function start(_username, _isAWS, _report, _callback) {
+    username = _username
+    isAWS = _isAWS
+    report = _report
+    callbackOnFinish = _callback
     // First find the original account.
     const params = {
         screen_name: username
@@ -138,16 +142,9 @@ function processImposters(imposters) {
     maybeReportImposters(imposters)
 }
 
-// Used if rurnning this as an AWS Lambda function.
-exports.handler = (event, context, callback) => {
-    report = event.report
-    isAWS = !event.isLocal
-    callbackOnFinish = callback
-    username = event.username
-    start()
-}
+module.exports = { start, isAWS, callbackOnFinish, username, report }
 
 // Used if running as a local script.
 if (require.main === module) {
-    exports.handler({ isLocal: true, username: process.argv[2] })
+    start(process.argv[2])
 }
