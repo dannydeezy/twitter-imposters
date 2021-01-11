@@ -1,7 +1,5 @@
 # Find and Report Imposters of a Twitter Account
 
-Note this uses three external npm packages: `twitter`, `request-promise`, and `prompt-sync` which the author does not control. You should always audit code before running it.
-
 ## Remote Usage (Easy)
 Requires `curl`: (https://curl.haxx.se/download.html)
 
