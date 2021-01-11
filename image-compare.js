@@ -1,5 +1,4 @@
 const fs = require('fs')
-const { imgDiff } = require("img-diff-js");
 const child_process = require('child_process')
 const request = require('request-promise')
 const imageFolder = `/tmp/twitter-imposter-img`

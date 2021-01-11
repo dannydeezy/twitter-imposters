@@ -29,7 +29,7 @@ async function start(_username, _isAWS, _report, _callback) {
     await imageCompare.fetchAndSaveOriginalProfilePic(userObj.profile_image_url_https)
     // Now find imposters.
     const results = await findImposters(userObj, callbackOnFinish)
-    console.dir(results)
+    return results
 }
 
 // Determines whether the provider imposter is likely an imposter of the provided original account.
@@ -107,7 +107,7 @@ async function maybeReportImposters(names) {
             client.post('users/report_spam.json', params, (err, data, response) => {
                 if (err) {
                     console.dir(err);
-                    resolve('Error reporting user')
+                    resolve('Error reporting this user (likely rate-limited). Try again later.')
                     return;
                 }
                 console.log(`Reported ${name}`)
@@ -115,7 +115,10 @@ async function maybeReportImposters(names) {
             })
         })
     }
-    return reportResults
+    return {
+        message: "Found and reported imposters",
+        imposters: reportResults
+    }
 }
 
 async function processImposters(imposters) {
