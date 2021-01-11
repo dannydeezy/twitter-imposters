@@ -92,7 +92,14 @@ function findImposters(userObj) {
 function maybeReportImposters(names) {
     if (isAWS) {
         if (!report) {
-            if (callbackOnFinish) callbackOnFinish()
+            if (callbackOnFinish) {
+                callbackOnFinish({
+                    status: 200,
+                    body: { 
+                        message: 'Found imposters',
+                        imposters: names
+                }})
+            }
             return
         }
     } else {
@@ -102,7 +109,7 @@ function maybeReportImposters(names) {
     function waitForAllReports() {
         if (Object.keys(reportResults).length === names.length) {
             console.log(`Done`)
-            if (callbackOnFinish) callbackOnFinish()
+            if (callbackOnFinish) callbackOnFinish(reportResults)
         } else {
             setTimeout(waitForAllReports, 50)
         }
