@@ -87,12 +87,9 @@ async function findImposters(userObj) {
 async function maybeReportImposters(names) {
     if (isAWS) {
         if (!report) {
-            return {
-                status: 200,
-                body: { 
-                    message: 'Found imposters',
-                    imposters: names
-                }
+            return { 
+                message: 'Found imposters',
+                imposters: names
             }
         }
     } else {
@@ -117,7 +114,7 @@ async function maybeReportImposters(names) {
     }
     return {
         message: "Found and reported imposters",
-        imposters: reportResults
+        imposters: Object.keys(reportResults)
     }
 }
 
