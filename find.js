@@ -5,6 +5,7 @@ const username = process.argv[2]
 const prompt = require('prompt-sync')({sigint: true})
 const imageCompare = require('./image-compare')
 
+let report, callbackOnFinish, isAWS
 function start() {
     // First find the original account.
     const params = {
@@ -19,7 +20,7 @@ function start() {
         // Save the original user's profile picture.
         imageCompare.fetchAndSaveOriginalProfilePic(userObj.profile_image_url_https)
         // Now find imposters.
-        findImposters(userObj)
+        findImposters(userObj, callbackOnFinish)
     })
 }
 
@@ -80,7 +81,7 @@ function findImposters(userObj) {
                 processImposters(imposters)
 
             } else {
-                setTimeout(waitForResultsAndContinue, 500)
+                setTimeout(waitForResultsAndContinue, 50)
             }
         }
         waitForResultsAndContinue()
@@ -89,12 +90,29 @@ function findImposters(userObj) {
 }
 
 function maybeReportImposters(names) {
-    prompt('\nProceed to report imposters?\n\n(press any key to continue, or CTRL-C to exit)\n')
+    if (isAWS) {
+        if (!report) {
+            if (callbackOnFinish) callbackOnFinish()
+            return
+        }
+    } else {
+        prompt('\nProceed to report imposters?\n\n(press any key to continue, or CTRL-C to exit)\n')
+    }
+    const reportResults = {}
+    function waitForAllReports() {
+        if (Object.keys(reportResults).length === names.length) {
+            console.log(`Done`)
+            if (callbackOnFinish) callbackOnFinish()
+        } else {
+            setTimeout(waitForAllReports, 50)
+        }
+    }
     for (const name of names) {
         const params = {
             screen_name: name
         }
         client.post('users/report_spam.json', params, (err, data, response) => {
+            reportResults[name] = err || data || response
             if (err) {
                 console.dir(err);
                 return;
@@ -102,6 +120,7 @@ function maybeReportImposters(names) {
             console.log(`Reported ${name}`)
         })
     }
+    waitForAllReports()
 }
 
 function processImposters(imposters) {
@@ -113,4 +132,15 @@ function processImposters(imposters) {
     maybeReportImposters(imposters)
 }
 
-start()
+// Used if rurnning this as an AWS Lambda function.
+exports.handler = (event, context, callback) => {
+    report = event.report
+    isAWS = !event.isLocal
+    callbackOnFinish = callback
+    start()
+}
+
+// Used if running as a local script.
+if (require.main === module) {
+    exports.handler({ isLocal: true })
+}
