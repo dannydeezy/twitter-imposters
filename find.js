@@ -1,11 +1,10 @@
 const Twitter = require('twitter');
 const config = require('./credentials.js');
 const client = new Twitter(config);
-const username = process.argv[2]
 const prompt = require('prompt-sync')({sigint: true})
 const imageCompare = require('./image-compare')
 
-let report, callbackOnFinish, isAWS
+let username, report, callbackOnFinish, isAWS
 function start() {
     // First find the original account.
     const params = {
@@ -144,10 +143,11 @@ exports.handler = (event, context, callback) => {
     report = event.report
     isAWS = !event.isLocal
     callbackOnFinish = callback
+    username = event.username
     start()
 }
 
 // Used if running as a local script.
 if (require.main === module) {
-    exports.handler({ isLocal: true })
+    exports.handler({ isLocal: true, username: process.argv[2] })
 }
