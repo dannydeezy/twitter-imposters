@@ -11,6 +11,10 @@ To report all imposters:
 ```
 curl -X POST https://imposters.dannydeezy.com -d '{"username":"pierre_rochard", "report": true}'
 ```
+You can also add additional search queries (for example a name or words in a bio) to help find imposters:
+```
+curl -X POST https://imposters.dannydeezy.com -d '{"username":"pierre_rochard", "queries": ["PierreRochard.com", "Pierre Rochard"], "report": true}'
+```
 ## Local Usage (Hard)
 Requires NodeJS
 1. Create a [ Twitter developer account and create an App ](https://developer.twitter.com/). This is required in order to access the Twitter API.
@@ -32,4 +36,8 @@ module.exports = {
 4. Run the app with the username of the legitimate account you want to find imposters for. Script will prompt you if you'd like to report them. Note this will create a folder at `/tmp/twitter-imposter-img` and save some profile pictures there.
 ```
 node find.js pierre_rochard
+```
+You can also add additional search queries like this, which will search names and bios:
+```
+node find.js pierre_rochard '["PierreRochard.com","Pierre Rochard"]'
 ```

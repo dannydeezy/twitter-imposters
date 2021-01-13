@@ -4,12 +4,13 @@ const client = new Twitter(config);
 const prompt = require('prompt-sync')({sigint: true})
 const imageCompare = require('./image-compare')
 
-let username, report, callbackOnFinish, isAWS
-async function start(_username, _isAWS, _report, _callback) {
+let username, extraQueries, report, callbackOnFinish, isAWS
+async function start(_username, _queries, _isAWS, _report, _callback) {
     username = _username
     isAWS = _isAWS
     report = _report
     callbackOnFinish = _callback
+    extraQueries = _queries
     // First find the original account.
     const params = {
         screen_name: username
@@ -59,12 +60,11 @@ async function isImposter(imposter, original) {
     return false
 }
 
-
-async function findImposters(userObj) {
+async function findPossibleImpostersBySearchQuery(query) {
     const params = {
-        q: userObj.name
+        q: query
     }
-    const possibleImposters = await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         client.get('users/search.json', params, async (err, data, response) => {
             if (err) {
                 console.dir(err)
@@ -75,13 +75,27 @@ async function findImposters(userObj) {
             resolve(possibleImposters)
         })
     })
+}
+
+async function findImposters(userObj) {
+    // Search for the user's current twitter name
+    const possibleImposters = await findPossibleImpostersBySearchQuery(userObj.name)
+    // If additional queries were supplied, search for these one too.
+    if (extraQueries) {
+        for (const extraQuery of extraQueries) {
+            const morePossibleImposters = await findPossibleImpostersBySearchQuery(extraQuery)
+            possibleImposters.push(...morePossibleImposters)
+        }
+    }
     const imposters = []
     for (const possibleImposter of possibleImposters) {
         if (await isImposter(possibleImposter, userObj)) {
             imposters.push(possibleImposter)
         }
     }
-    return await processImposters(imposters.map(it => it.screen_name))
+    const imposterUsernames = imposters.map(it => it.screen_name)
+    const uniqueImposerUsernames = Array.from(new Set(imposterUsernames))
+    return await processImposters(uniqueImposerUsernames)
 }
 
 async function maybeReportImposters(names) {
@@ -125,5 +139,5 @@ module.exports = { start, isAWS, callbackOnFinish, username, report }
 
 // Used if running as a local script.
 if (require.main === module) {
-    start(process.argv[2])
+    start(process.argv[2], process.argv.length > 3 ? JSON.parse(process.argv[3]) : null)
 }
