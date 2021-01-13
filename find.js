@@ -10,7 +10,7 @@ async function start(_username, _queries, _isAWS, _report, _callback) {
     isAWS = _isAWS
     report = _report
     callbackOnFinish = _callback
-    extraQueries = _queries
+    extraQueries = _queries || []
     // First find the original account.
     const params = {
         screen_name: username
@@ -80,12 +80,11 @@ async function findPossibleImpostersBySearchQuery(query) {
 async function findImposters(userObj) {
     // Search for the user's current twitter name
     const possibleImposters = await findPossibleImpostersBySearchQuery(userObj.name)
+    extraQueries.push(userObj.screen_name)
     // If additional queries were supplied, search for these one too.
-    if (extraQueries) {
-        for (const extraQuery of extraQueries) {
-            const morePossibleImposters = await findPossibleImpostersBySearchQuery(extraQuery)
-            possibleImposters.push(...morePossibleImposters)
-        }
+    for (const extraQuery of extraQueries) {
+        const morePossibleImposters = await findPossibleImpostersBySearchQuery(extraQuery)
+        possibleImposters.push(...morePossibleImposters)
     }
     const imposters = []
     for (const possibleImposter of possibleImposters) {
